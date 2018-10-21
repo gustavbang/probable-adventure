@@ -13,6 +13,7 @@ class Server:
 
 #Aktivererer server
  def activate_server(self):
+     self.interpretHtml()
      print("Starter http server på: ", self.host, ":",self.port)
      self.socket.bind((self.host, self.port))
      self._wait_for_connections()
@@ -20,9 +21,9 @@ class Server:
  def _gen_headers(self,  code):
 
      h = ''
-     if (code == 200):
+     if code == 200:
         h = 'HTTP/1.1 200 OK\n'
-     elif(code == 404):
+     elif code == 404:
         h = 'HTTP/1.1 404 Not Found\n'
 
      # write further headers
@@ -37,12 +38,13 @@ class Server:
      """ Main loop awaiting connections """
      while True:
          print ("Venter på forbindelse..")
-         self.socket.listen(5) # maximum number of queued connections
+         self.socket.listen(5)
 
          conn, addr = self.socket.accept()
          print("Får connection fra::", addr)
 
-         data = conn.recv(1024) #receive data from client
+         #får data fra client
+         data = conn.recv(1024)
          print("Data: ", data)
          #string indeholder alt det spændende
          string = bytes.decode(data)
@@ -57,47 +59,64 @@ class Server:
              file_requested = string.split(' ')
              file_requested = file_requested[1]
 
-             #Kigger efter URL arguments
-             file_requested = file_requested.split('?')[0]  # disregard anything after '?'
+             #Kigger efter URL arguments, fjerner alt efter ?
+             file_requested = file_requested.split('?')[0]
 
-             if (file_requested == '/test'):  # in case no file is specified by the browser
-                 file_requested = 'test.html' # load index.html by default
+             if file_requested == '/test':
+                 file_requested = 'test.html'
 
-             if (file_requested == '/'):  # in case no file is specified by the browser
-                 file_requested = 'index.html' # load index.html by default
-
+             if file_requested == '/':
+                 file_requested = 'index.html'
 
              file_requested = file_requested
-             print ("Serving web page [",file_requested,"]")
+             print ("Serving web page [", file_requested, "]")
 
-             ## Load file content
              try:
                  file_handler = open(file_requested,'rb')
-                 if (request_method == 'GET'):  #only read the file when GET
-                     response_content = file_handler.read() # read file content
+                 if request_method == 'GET':
+                     response_content = file_handler.read()
                  file_handler.close()
 
                  response_headers = self._gen_headers( 200)
 
-             except Exception as e: #in case file was not found, generate 404 page
+                #Hvis fil ikke findes, smides error 404
+             except Exception as e:
                  print ("Warning, file not found. Serving response code 404\n", e)
                  response_headers = self._gen_headers( 404)
 
-                 if (request_method == 'GET'):
-                    response_content = b"<html><body><p>Error 404: File not found</p><p>Python HTTP server</p></body></html>"
+                 if request_method == 'GET':
+                    response_content = b"<html><body><p>Error 404: File not found</p><p>HTTP server</p></body></html>"
 
-             server_response =  response_headers.encode() # return headers for GET and HEAD
-             if (request_method == 'GET'):
-                 server_response +=  response_content  # return additional conten for GET only
+             server_response = response_headers.encode()
+             if request_method == 'GET':
+                 server_response += response_content
 
              conn.send(server_response)
-             print ("Closing connection with client")
+             print("Closing connection with client")
              conn.close()
 
          else:
              print("Unknown HTTP request method:", request_method)
 
 
-print ("Starter webserver")
+ def interpretHtml(self):
+     file = open("index.html")
+     loop = None
+     tmp = file.read().split("\n")
+     print(tmp)
+     if "(start-python-lang)" in tmp:
+         loop = True
+         while(loop):
+             if "(end-python-lang)" in tmp:
+                 loop = False
+
+             if ""
+
+
+
+
+
+
+print("Starter webserver")
 s = Server(80)
 s.activate_server()
