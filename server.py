@@ -101,7 +101,7 @@ class Server:
 
  def interpretHtml(self):
      file = open("index.html")
-     loop = None
+     variablesDict = {}
      htmlArray = file.read().split("\n")
      print(htmlArray)
      if "(start-python-lang)" in htmlArray:
@@ -109,10 +109,14 @@ class Server:
                                             #index af sætningen             til index af slutningen
          pythonLang = htmlArray[htmlArray.index("(start-python-lang)"): htmlArray.index("(end-python-lang)")]
 
-
+        #looper igennem alt relevant fra html
          for temp in pythonLang:
             if "print" in temp:
                 print(temp[7:-2])
+            if "var" in temp:
+                variablesDict[temp[4:5]] = temp[8:]
+         print(variablesDict)
+
 
 
 
