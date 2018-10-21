@@ -102,15 +102,17 @@ class Server:
  def interpretHtml(self):
      file = open("index.html")
      loop = None
-     tmp = file.read().split("\n")
-     print(tmp)
-     if "(start-python-lang)" in tmp:
-         loop = True
-         while(loop):
-             if "(end-python-lang)" in tmp:
-                 loop = False
+     htmlArray = file.read().split("\n")
+     print(htmlArray)
+     if "(start-python-lang)" in htmlArray:
+         #Hvis arrayet indeholder den string, så forkort arrayet til:
+                                            #index af sætningen             til index af slutningen
+         pythonLang = htmlArray[htmlArray.index("(start-python-lang)"): htmlArray.index("(end-python-lang)")]
 
-             if ""
+
+         for temp in pythonLang:
+            if "print" in temp:
+                print(temp[7:-2])
 
 
 
