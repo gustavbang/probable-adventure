@@ -3,6 +3,8 @@
 import socket  # Networking support
 import time    # Current time
 
+import re
+
 class Server:
 
 #Konstruktør
@@ -100,22 +102,40 @@ class Server:
 
 
  def interpretHtml(self):
+     #Til at holde variabler
+     a = 0
      file = open("index.html")
      variablesDict = {}
      htmlArray = file.read().split("\n")
      print(htmlArray)
      if "(start-python-lang)" in htmlArray:
-         #Hvis arrayet indeholder den string, så forkort arrayet til:
-                                            #index af sætningen             til index af slutningen
+         #Hvis arrayet indeholder (start-python-lang), så forkort arrayet til:
+                                            #index af (start-python-lang)             til index af (end-python-lang)
          pythonLang = htmlArray[htmlArray.index("(start-python-lang)"): htmlArray.index("(end-python-lang)")]
 
         #looper igennem alt relevant fra html
          for temp in pythonLang:
-            if "print" in temp:
+            if "print(\"" in temp:
                 print(temp[7:-2])
+                continue
+
             if "var" in temp:
                 variablesDict[temp[4:5]] = temp[8:]
-         print(variablesDict)
+
+            if "print(" in temp:
+
+                #Fjerner print foran og parantesen bagerst så vi kun har indholdet
+                content = temp[6:-1]
+
+                #Deler op i array på mellemrum
+                contentArray = content.split(" ")
+
+                #Kører array igennem
+                for cont in contentArray:
+                    #Nu tester jeg om det er variabler eller tal
+                    if re.match("^[A-Za-z0-9_-]*$", cont):
+                        #Så skriver den ud hvad A og B er
+                        print(variablesDict.get(cont))
 
 
 
