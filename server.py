@@ -104,6 +104,9 @@ class Server:
             print("Unknown HTTP request method:", request_method)
 
 
+
+
+
     def interpretHtml(self):
         #Til at holde variabler
         a = 0
@@ -115,7 +118,6 @@ class Server:
             #Hvis arrayet indeholder (start-python-lang), så forkort arrayet til:
             #index af (start-python-lang)             til index af (end-python-lang)
             pythonLang = htmlArray[htmlArray.index("(start-python-lang)"): htmlArray.index("(end-python-lang)")]
-
             #looper igennem alt relevant fra html
             for temp in pythonLang:
                 if "print(\"" in temp:
@@ -129,17 +131,46 @@ class Server:
 
                     #Fjerner print foran og parantesen bagerst så vi kun har indholdet
                     content = temp[6:-1]
-                    print(content)
-
                     #Deler op i array på mellemrum
                     contentArray = content.split(" ")
 
+                    values = []
+                    bool = None
                     #Kører array igennem
-                    for cont in contentArray:
+                    for symbol in contentArray:
+
                         #Nu tester jeg om det er variabler eller tal
-                        if re.match("^[A-Za-z0-9_-]*$", cont):
+                        if re.match("^[A-Za-z0-9_-]*$", symbol):
                             #Så skriver den ud hvad A og B er
-                            print(variablesDict.get(cont))
+                            if variablesDict.get(symbol) is not None:
+                                values.append(float(variablesDict.get(symbol)))
+
+                        if symbol == '+':
+                            bool = "Plus"
+                        if symbol == '-':
+                            bool = "Minus"
+                        if symbol == '*':
+                            bool = "Multiplication"
+                        if symbol == '/':
+                            bool = "Divide"
+
+                    if bool is "Plus":
+                        print(values[0]+values[1])
+
+                    if bool is "Minus":
+                        print(values[0]-values[1])
+
+                    if bool is "Multiplication":
+                        print(values[0]*values[1])
+
+                    if bool is "Divide":
+                        print(values[0]/values[1])
+
+
+
+
+
+
 
     def logging(self, string):
         if "log.txt" is None:
