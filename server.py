@@ -146,6 +146,7 @@ class Server:
             open("log.txt", "w+")
         file_object = open("log.txt", 'a')
         file_object.write(datetime.datetime.now().isoformat() + "\n \n" + string + "\n \n")
+        file_object.close()
 
 
 
